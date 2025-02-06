@@ -10,53 +10,39 @@
 #                                                                              #
 # **************************************************************************** #
 
-#MAKEFLAGS += -s
-
 #name of the library to create
-NAME = libft.a
+NAME = libftprintf.a
 
 #compiler and options
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
-AR=ar
-ARFLAGS=-rcs
-
-#dependencies
-DEPS = libft.h
-
 #source files
-LIBRARY_DIRS =	my_libft \
-				printf \
-				GNL \
+SRC = ft_printf.c \
+	ft_putchar.c \
+	ft_putstr.c \
+	ft_putnbr_base.c \
+	ft_putnbr_p.c 
 
-LIBFT = ./my_libft/my.libft.a \
-		./printf/libftprintf.a \
-		./GNL/get_next_line.a \
+OBJ = $(SRC:.c=.o)
 
 #default rule
 all: $(NAME)
 
-# static library creation
-$(NAME):
-	cd my_libft && make
-	ar x my_libft/my_libft.a
-	cd printf && make
-	ar x printf/libftprintf.a
-	cd GNL && make
-	ar x GNL/get_next_line.a
-	$(AR) $(ARFLAGS) $(NAME) *.o
-	rm *.o
-	ranlib $(NAME)
+#library creation
+$(NAME): $(OBJ)
+	ar rcs $(NAME) $(OBJ)
+
+.c.o:
+	$(CC) $(CFLAGS) -c $< -o $@
 
 #cleaning object files
 clean:
-	$(foreach dir, $(LIBRARY_DIRS), $(MAKE) -C $(dir) clean;)
+	rm -f $(OBJ)
 
 #full cleanup (objects and library)
 fclean: clean
-	$(foreach dir, $(LIBRARY_DIRS), $(MAKE) -C $(dir) fclean;)
-		rm -f $(NAME) $(LIBFT)
+	rm -f $(NAME)
 
 #full recompilation
 re: fclean all
